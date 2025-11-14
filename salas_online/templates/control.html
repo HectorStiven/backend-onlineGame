@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Control Remoto</title>
+    <style>
+        body, html { margin:0; padding:0; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+        button { width:45%; height:40%; font-size:2em; margin:5px; }
+        #buttons { display:flex; flex-wrap:wrap; justify-content:center; width:100%; height:50%; }
+    </style>
+</head>
+<body>
+    <h2>Control Remoto</h2>
+    <div id="buttons">
+        <!-- Direcciones -->
+        <button onclick="sendAction('arriba')">Arriba</button>
+        <button onclick="sendAction('abajo')">Abajo</button>
+        <button onclick="sendAction('izquierda')">Izquierda</button>
+        <button onclick="sendAction('derecha')">Derecha</button>
+        <!-- Botones adicionales -->
+        <button onclick="sendAction('A')">A</button>
+        <button onclick="sendAction('B')">B</button>
+        <button onclick="sendAction('C')">C</button>
+        <button onclick="sendAction('D')">D</button>
+    </div>
+
+    <script>
+        const roomCode = prompt("Ingresa el código de la sala:");
+        const ws = new WebSocket(`ws://192.168.1.7:8000/ws/sala/${roomCode}/`);
+
+        ws.onopen = () => console.log("Conectado al WebSocket");
+        ws.onclose = () => console.log("Conexión cerrada");
+        ws.onmessage = (e) => console.log("Servidor:", e.data);
+
+        function sendAction(action) {
+            if(ws.readyState === WebSocket.OPEN){
+                ws.send(JSON.stringify({action}));
+            }
+        }
+    </script>
+</body>
+</html>
