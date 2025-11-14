@@ -1,0 +1,1 @@
+web: gunicorn OnlineGame.wsgi
