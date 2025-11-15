@@ -40,7 +40,9 @@
         ws.onclose = () => console.log("Conexión cerrada");
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            const action = data.message.replace("Recibido: ", "");
+const action =
+    data.action ||                                   // viene desde React
+    (data.message ? data.message.replace("Recibido: ", "") : null); // viene desde HTML
             movePlayer(action);
             showAction(action);
         };
