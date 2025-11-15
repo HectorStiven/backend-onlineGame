@@ -33,18 +33,17 @@
     <div id="actionBox">Esperando acción...</div>
 
     <script>
-      const roomCode = prompt("Ingresa el código de la sala:");
-      const ws = new WebSocket(`ws://192.168.1.7:8000/ws/sala/${roomCode}/`);
-      // const ws = new WebSocket(`wss://backend-onlinegame.onrender.com/ws/sala/1/`);
-      ws.onopen = () => console.log("Conectado al WebSocket");
-      ws.onclose = () => console.log("Conexión cerrada");
-      ws.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-        const msg = JSON.parse(data.message.replace("Recibido: ", ""));
-        const action = msg.action;
-        movePlayer(action);
-        showAction(action);
-      };
+        const roomCode = prompt("Ingresa el código de la sala:");
+        // const ws = new WebSocket(`ws://192.168.1.7:8000/ws/sala/${roomCode}/`);
+        const ws = new WebSocket(`wss://backend-onlinegame.onrender.com/ws/sala/${roomCode}/`);
+        ws.onopen = () => console.log("Conectado al WebSocket");
+        ws.onclose = () => console.log("Conexión cerrada");
+        ws.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            const action = data.message.replace("Recibido: ", "");
+            movePlayer(action);
+            showAction(action);
+        };
 
       const canvas = document.getElementById("gameCanvas");
       const ctx = canvas.getContext("2d");

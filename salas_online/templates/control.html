@@ -25,9 +25,7 @@
 
     <script>
         const roomCode = prompt("Ingresa el código de la sala:");
-        // const ws = new WebSocket(`ws://192.168.1.7:8000/ws/sala/${roomCode}/`);
-        const ws = new WebSocket(`wss://backend-onlinegame.onrender.com/ws/sala/1/
-        `);
+        const ws = new WebSocket(`ws://192.168.1.7:8000/ws/sala/${roomCode}/`);
 
         ws.onopen = () => console.log("Conectado al WebSocket");
         ws.onclose = () => console.log("Conexión cerrada");
