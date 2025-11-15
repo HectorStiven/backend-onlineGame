@@ -1,63 +1,92 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Pantalla del Juego</title>
     <style>
-        body, html { margin:0; padding:0; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-        canvas { border:1px solid black; width:100%; height:70%; }
-        #actionBox { margin-top:20px; padding:20px; border:1px solid black; font-size:2em; width:200px; text-align:center; }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      canvas {
+        border: 1px solid black;
+        width: 100%;
+        height: 70%;
+      }
+      #actionBox {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid black;
+        font-size: 2em;
+        width: 200px;
+        text-align: center;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <canvas id="gameCanvas"></canvas>
     <div id="actionBox">Esperando acción...</div>
 
     <script>
-        const roomCode = prompt("Ingresa el código de la sala:");
-        // const ws = new WebSocket(`ws://192.168.1.7:8000/ws/sala/${roomCode}/`);
-        const ws = new WebSocket(`wss://backend-onlinegame.onrender.com/ws/sala/1/`);
-        ws.onopen = () => console.log("Conectado al WebSocket");
-        ws.onclose = () => console.log("Conexión cerrada");
-        ws.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            const action = data.message.replace("Recibido: ", "");
-            movePlayer(action);
-            showAction(action);
-        };
+      const roomCode = prompt("Ingresa el código de la sala:");
+      const ws = new WebSocket(`ws://192.168.1.7:8000/ws/sala/${roomCode}/`);
+      // const ws = new WebSocket(`wss://backend-onlinegame.onrender.com/ws/sala/1/`);
+      ws.onopen = () => console.log("Conectado al WebSocket");
+      ws.onclose = () => console.log("Conexión cerrada");
+      ws.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        const msg = JSON.parse(data.message.replace("Recibido: ", ""));
+        const action = msg.action;
+        movePlayer(action);
+        showAction(action);
+      };
 
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-        let player = {x:50, y:50};
+      let player = { x: 50, y: 50 };
 
-        function drawPlayer(){
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillRect(player.x, player.y, 20, 20);
+      function drawPlayer() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(player.x, player.y, 20, 20);
+      }
+
+      function movePlayer(action) {
+        switch (action) {
+          case "arriba":
+            player.y -= 10;
+            break;
+          case "abajo":
+            player.y += 10;
+            break;
+          case "izquierda":
+            player.x -= 10;
+            break;
+          case "derecha":
+            player.x += 10;
+            break;
+          // Otros botones no mueven el jugador
         }
-
-        function movePlayer(action){
-            switch(action){
-                case "arriba": player.y -= 10; break;
-                case "abajo": player.y += 10; break;
-                case "izquierda": player.x -= 10; break;
-                case "derecha": player.x += 10; break;
-                // Otros botones no mueven el jugador
-            }
-            drawPlayer();
-        }
-
-        function showAction(action){
-            const box = document.getElementById("actionBox");
-            if(["A","B","C","D"].includes(action)){
-                box.textContent = `Botón presionado: ${action}`;
-            } else {
-                box.textContent = `Movimiento: ${action}`;
-            }
-        }
-
         drawPlayer();
+      }
+
+      function showAction(action) {
+        const box = document.getElementById("actionBox");
+        if (["A", "B", "C", "D"].includes(action)) {
+          box.textContent = `Botón presionado: ${action}`;
+        } else {
+          box.textContent = `Movimiento: ${action}`;
+        }
+      }
+
+      drawPlayer();
     </script>
-</body>
+  </body>
 </html>
